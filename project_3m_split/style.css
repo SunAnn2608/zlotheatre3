@@ -1,0 +1,527 @@
+/* Fonts */
+@font-face{ font-family:"Blackcraft"; src:url("./fonts/Blackcraft.ttf") format("truetype"); font-display:swap; }
+@font-face{ font-family:"Unutterable"; src:url("./fonts/Unutterable.ttf") format("truetype"); font-display:swap; }
+@font-face{ font-family:"Sehnsucht"; src:url("./fonts/ofont.ru_Sehnsucht Font.ttf") format("truetype"); font-display:swap; }
+
+/* Reset */
+*, *::before, *::after{ box-sizing:border-box; }
+html, body{ height:100%; }
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  overflow:hidden;
+  font-family:"Blackcraft", system-ui, sans-serif;
+}
+img{ display:block; }
+
+/* =========================
+   Variables
+========================= */
+:root{
+  /* safe-area */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+
+  /* panel sizing */
+  --panel-w: min(1180px, calc(100vw - 24px));
+  --pad-left: clamp(14px, 3vw, 50px);
+  --pad-right: clamp(14px, 5vw, 100px);
+
+  --arrow-h: 44px;
+  --arrow-h-mobile: 22px;
+
+  /* cen5 buttons */
+  --cen5-btn-offset-x: 28px;
+  --cen5-btn-offset-y: 26px;
+
+  /* cen8 "take letter" */
+  --take-letter-bottom: 26px;
+
+  /* cen9 choice buttons */
+  --choice9-offset-x: 28px;
+  --choice9-offset-y: 26px;
+}
+
+/* =========================
+   Scene base
+========================= */
+.scene{
+  position:relative;
+  width:100vw;
+  height:100svh;
+  height:100dvh;
+  overflow:hidden;
+}
+
+/* Generic full-screen image background */
+.scene-bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  user-select:none;
+  pointer-events:none;
+}
+
+/* =========================
+   Curtain choices
+========================= */
+.choice-layer{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100;            /* above panels */
+  pointer-events:none;
+}
+.choices{
+  display:flex;
+  gap: clamp(80px, 18vw, 360px);
+}
+.choice{
+  font-family:"Blackcraft";
+  font-size: clamp(44px, 7vw, 100px);
+  line-height:1;
+  color:#fff;
+  text-shadow:0 6px 30px rgba(0,0,0,0.6);
+  user-select:none;
+
+  cursor:pointer;
+  pointer-events:auto;
+
+  animation: choicePulse 2.4s ease-in-out infinite;
+}
+.choice--no{ animation-delay:1.2s; }
+
+@keyframes choicePulse{
+  0%,20%,100%{ transform:none; }
+  35%{ transform:translateY(-6px); }
+  50%{ transform:none; }
+}
+
+/* =========================
+   Text panel
+========================= */
+.text-panel{
+  position:absolute;
+  left:50%;
+  bottom: calc(32px + var(--safe-bottom));
+  width:var(--panel-w);
+  z-index:50;
+
+  opacity:0;
+  transform:translateX(-50%) translateY(10px);
+  animation: panelIn 900ms ease-out 250ms forwards;
+}
+@keyframes panelIn{
+  to{ opacity:1; transform:translateX(-50%) translateY(0); }
+}
+
+.text-panel__bg{
+  width:100%;
+  height:auto;
+  pointer-events:none;
+  user-select:none;
+}
+
+.text-panel__content{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  padding:18px var(--pad-right) 18px var(--pad-left);
+  pointer-events:none;
+}
+
+.text-panel__text{
+  font-family:"Unutterable","Sehnsucht";
+  font-size: clamp(14px, 2.2vw, 30px);
+  line-height:1.15;
+  text-align:left;
+  color:rgba(255,255,255,0.95);
+  text-shadow:0 2px 10px rgba(0,0,0,0.45);
+  white-space:pre-line;
+  max-width:100%;
+}
+
+/* variant for line 3 (curtain "Нет") */
+.text-panel__line3{
+  font-size: clamp(28px, 3.4vw, 48px);
+  color:#d60000;
+  line-height:1.05;
+  display:block;
+  margin-top:6px;
+}
+
+/* Arrow button (clickable) */
+.text-panel__arrow-btn{
+  position:absolute;
+  right:26px;
+  bottom:18px;
+  height:var(--arrow-h);
+  width:auto;
+
+  padding:0;
+  border:0;
+  background:transparent;
+
+  cursor:pointer;
+  opacity:0.95;
+  user-select:none;
+  pointer-events:auto;
+
+  z-index:60; /* above panel bg */
+}
+.text-panel__arrow-btn img{
+  height:100%;
+  width:auto;
+  display:block;
+  pointer-events:none;
+  user-select:none;
+}
+.text-panel__arrow-btn:focus-visible{
+  outline:2px solid rgba(255,255,255,0.65);
+  outline-offset:6px;
+  border-radius:8px;
+}
+
+/* Only cen1 text tuning */
+#sceneCen1 .text-panel__text{
+  font-size: clamp(13px, 1.9vw, 26px);
+  line-height:1.2;
+  max-width: min(880px, 100%);
+}
+
+/* panel fade out */
+.panel-fadeout{
+  opacity:0 !important;
+  transform:translateX(-50%) translateY(10px) !important;
+  transition:opacity 450ms ease, transform 450ms ease;
+  animation:none !important;
+}
+
+/* =========================
+   Action buttons (cen2/3/4/5/8/etc.)
+========================= */
+.action-btn{
+  position:absolute;
+  top:50%;
+  left:45%;
+  transform:translate(-50%, -50%);
+  z-index:120; /* above panels */
+
+  font-family:"Blackcraft";
+  font-size: clamp(44px, 7vw, 100px);
+  line-height:1;
+  color:#fff;
+
+  text-shadow:0 6px 30px rgba(0,0,0,0.6);
+  user-select:none;
+  cursor:pointer;
+}
+
+/* Shift left (kept) */
+#btnGo, #btnApproach{ margin-left:-100px; }
+
+/* =========================
+   CEN4: centered window image
+========================= */
+.cen4-window{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+  pointer-events:none;
+}
+.cen4-window img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  user-select:none;
+  pointer-events:none;
+}
+
+/* CEN4: button right-center (safe, never off-screen) */
+#btnKnock{
+  position:absolute;
+  top:50%;
+  left:auto !important;
+  right: clamp(12px, 3vw, 48px) !important;
+  transform:translateY(-50%) !important;
+  z-index:130;
+  max-width: calc(100vw - 24px);
+  white-space: nowrap;
+}
+
+/* =========================
+   Mini-game overlay
+========================= */
+.game-overlay{
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.92);
+  padding:24px;
+}
+.game-overlay[aria-hidden="false"]{ display:flex; }
+
+.game-overlay__img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  user-select:none;
+  pointer-events:none;
+}
+
+.game-overlay__close{
+  position:fixed;
+  top:20px;
+  right:22px;
+  z-index:2001;
+
+  font-family:"Blackcraft";
+  font-size:46px;
+  line-height:1;
+  color:#fff;
+
+  padding:10px 14px;
+  border:0;
+  background:transparent;
+
+  cursor:pointer;
+  user-select:none;
+  text-shadow:0 6px 30px rgba(0,0,0,0.6);
+}
+.game-overlay__close:focus-visible{
+  outline:2px solid rgba(255,255,255,0.65);
+  outline-offset:6px;
+  border-radius:8px;
+}
+
+/* backgame1 hint */
+.game1-hint{
+  position:absolute;
+  z-index:2003;
+  pointer-events:none;
+
+  font-family:"Blackcraft", system-ui, sans-serif;
+  font-size:28px;
+  line-height:1;
+  color:rgba(255,255,255,0.92);
+  text-shadow:0 6px 18px rgba(0,0,0,0.75);
+  letter-spacing:1px;
+  white-space:nowrap;
+}
+
+/* =========================
+   CEN5: FIXED — always 2 buttons in one row (no stacking)
+========================= */
+#sceneCen5 #btnGameWindow,
+#sceneCen5 #btnGameBucket{
+  position:absolute;
+  top:auto !important;
+  bottom: calc(var(--cen5-btn-offset-y) + var(--safe-bottom)) !important;
+  transform:none !important;
+
+  z-index:130;
+  pointer-events:auto;
+
+  /* big but responsive */
+  font-size: clamp(34px, 4.6vw, 92px);
+
+  /* prevent overlap: each gets half screen */
+  max-width: calc(50vw - 24px);
+  white-space: normal;
+  overflow-wrap:anywhere;
+}
+
+#sceneCen5 #btnGameWindow{
+  left: var(--cen5-btn-offset-x) !important;
+  right:auto !important;
+  text-align:left;
+}
+#sceneCen5 #btnGameBucket{
+  right: var(--cen5-btn-offset-x) !important;
+  left:auto !important;
+  text-align:right;
+}
+
+/* =========================
+   CEN8: TAKE LETTER + modal
+========================= */
+#btnTakeLetter{
+  top:auto;
+  left:50%;
+  bottom: calc(var(--take-letter-bottom) + var(--safe-bottom));
+  transform:translateX(-50%);
+  z-index:130;
+  font-size: clamp(46px, 6vw, 84px);
+  white-space:nowrap;
+}
+
+.letter-overlay{
+  position:absolute;
+  inset:0;
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.72);
+  pointer-events:auto;
+}
+.letter-overlay[aria-hidden="false"]{ display:flex; }
+
+.letter-wrap{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:34px;
+  padding:20px 24px;
+}
+
+.letter-title{
+  position:absolute;
+  top:-60px;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:"Blackcraft", system-ui, sans-serif;
+  font-size: clamp(52px, 6vw, 84px);
+  line-height:1;
+  color:#d60000;
+  text-shadow:0 8px 28px rgba(0,0,0,0.8);
+  letter-spacing:1px;
+  white-space:nowrap;
+  user-select:none;
+  pointer-events:none;
+}
+
+.letter-img{
+  max-width:min(92vw, 1200px);
+  max-height:86vh;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  user-select:none;
+  pointer-events:none;
+  filter:drop-shadow(0 18px 46px rgba(0,0,0,0.85));
+}
+
+.letter-btn{
+  font-family:"Blackcraft", system-ui, sans-serif;
+  font-size: clamp(56px, 7vw, 96px);
+  line-height:1;
+  color:#fff;
+  background:transparent;
+  border:0;
+  cursor:pointer;
+  user-select:none;
+  text-shadow:0 10px 32px rgba(0,0,0,0.85);
+  padding:10px 14px;
+}
+.letter-btn:focus-visible{
+  outline:2px solid rgba(255,255,255,0.65);
+  outline-offset:8px;
+  border-radius:10px;
+}
+
+/* =========================
+   CEN9: left/right choices — always sides (no stacking)
+========================= */
+#sceneCen9 .choice-btn{
+  position:absolute;
+  bottom: calc(var(--choice9-offset-y) + var(--safe-bottom));
+  z-index:130;
+
+  font-family:"Blackcraft", system-ui, sans-serif;
+  font-size: clamp(44px, 6.5vw, 92px);
+  line-height:1;
+  color:#fff;
+  text-shadow:0 6px 30px rgba(0,0,0,0.7);
+  user-select:none;
+  cursor:pointer;
+
+  white-space:nowrap;
+  width:auto;
+  transform:none !important;
+}
+
+#sceneCen9 .choice-btn--left{ left:var(--choice9-offset-x); text-align:left; }
+#sceneCen9 .choice-btn--right{ right:var(--choice9-offset-x); text-align:right; }
+
+/* =========================
+   CEN10/CEN11: restart button
+========================= */
+.restart-btn{
+  position:absolute;
+  right:26px;
+  bottom: calc(22px + var(--safe-bottom));
+  z-index:130;
+
+  font-family:"Blackcraft", system-ui, sans-serif;
+  font-size: clamp(36px, 5vw, 72px);
+  line-height:1;
+  color:#fff;
+  text-shadow:0 8px 26px rgba(0,0,0,0.75);
+  user-select:none;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+/* =========================
+   Mobile/touch tuning (kept lightweight)
+   IMPORTANT: no stacking for CEN5/CEN9 here
+========================= */
+@media (hover:none){
+  .text-panel__arrow-btn{ height:var(--arrow-h-mobile); }
+
+  #btnGo, #btnApproach{ margin-left:-60px; }
+
+  :root{
+    --cen5-btn-offset-x: 14px;
+    --cen5-btn-offset-y: 12px;
+    --choice9-offset-x: 14px;
+    --choice9-offset-y: 12px;
+    --take-letter-bottom: 12px;
+  }
+
+  .game1-hint{
+    font-size:18px;
+  }
+
+  /* tighten letter modal on mobile */
+  .letter-wrap{ gap:16px; padding:12px 12px; }
+}
+
+/* Rotate overlay */
+.rotate-overlay{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:none;
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+  padding:32px;
+  text-align:center;
+  font-family:"Unutterable","Sehnsucht",sans-serif;
+  font-size:22px;
+  color:rgba(255,255,255,0.9);
+  text-shadow:0 2px 10px rgba(0,0,0,0.45);
+}
+@media (orientation:portrait){
+  .rotate-overlay{ display:flex; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .choice{ animation:none; }
+  .text-panel{ animation:none; opacity:1; transform:translateX(-50%); }
+}
