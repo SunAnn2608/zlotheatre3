@@ -171,7 +171,7 @@ const game1 = (() => {
   let mouseY = -9999;
   let field = { x: 0, y: 0, w: 0, h: 0 };
 
-  // ✅ ускорили в ~3 раза
+  // ускорение в ~3 раза
   const cfg = {
     fleeRadius: 220,
     fleeStrength: 2700,   // было 900
@@ -291,7 +291,7 @@ const game1 = (() => {
     el.style.filter = "drop-shadow(0 8px 18px rgba(0,0,0,0.55))";
 
     const angle = Math.random() * Math.PI * 2;
-    const speed = 90 + Math.random() * 90; // ✅ стартовая скорость тоже +примерно ×3
+    const speed = 90 + Math.random() * 90; // стартовая скорость тоже +примерно ×3
     const s = { el, x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, size, alive: true };
 
     el.addEventListener("pointerenter", () => {
@@ -769,7 +769,7 @@ function markCen5Entered() {
 ========================= */
 function resetCen8UI() {
   if (cen8Panel) cen8Panel.hidden = false;
-  if (btnTakeLetter) btnTakeLetter.hidden = true;   // 👈 start hidden
+  if (btnTakeLetter) btnTakeLetter.hidden = true;   // start hidden
   if (letterOverlay) letterOverlay.setAttribute("aria-hidden", "true");
 }
 
